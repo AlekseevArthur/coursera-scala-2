@@ -9,10 +9,65 @@ class FunSetSuite extends munit.FunSuite:
 
   import FunSets.*
 
+  var s1 = singletonSet(1)
+  var s2 = singletonSet(2)
+  var u = union(s1, s2)
+
   test("contains is implemented") {
     assert(contains(x => true, 100))
+    assert(singletonSet(1)(1), "Singleton")
+    assert(!singletonSet(1)(2), "1 != 2")
   }
 
+  test("Union is completed") {
+    assertEquals(u(1), true)
+    assertEquals(u(2), true)
+    assertEquals(u(3), false)
+  }
+
+  test("Intersect is completed") {
+    var iS = intersect(s1, u)
+    assertEquals(iS(1), true)
+    assertEquals(iS(2), false)
+    assertEquals(iS(3), false)
+  }
+
+  test("Diff is completed") {
+    var dS = diff(u, s1)
+    assertEquals(dS(1), false)
+    assertEquals(dS(2), true)
+    assertEquals(dS(3), false)
+  }
+
+  test("Filter is completed") {
+    var fS = filter(u, x => x > 1)
+    assertEquals(fS(1), false)
+    assertEquals(fS(2), true)
+    assertEquals(fS(3), false)
+  }
+
+  test("Forall is completed") {
+    var fs1 = forall(u, x => x > 1)
+    var fs2 = forall(u, x => x > 0)
+    assertEquals(fs1, false)
+    assertEquals(fs2, true)
+  }
+
+  test("Exist is completed") {
+    var fs1 = exists(u, x => x > 1)
+    var fs2 = exists(u, x => x > 3)
+    assertEquals(fs1, true)
+    assertEquals(fs2, false)
+  }
+
+  test("Map is completed") {
+    var fs1 = map(u, x => x * 5)
+    var fs2 = map(u, x => x + 1)
+    assertEquals(contains(fs1, 5), true)
+    assertEquals(contains(fs1, 1), false)
+    assertEquals(contains(fs2, 3), true)
+    assertEquals(contains(fs2, 1), false)
+  }
   /**
    * When writing tests, one would often like to re-use certain values for multiple
    * tests. For instance, we would like to create an Int-set and have multiple test
@@ -44,29 +99,6 @@ class FunSetSuite extends munit.FunSuite:
    * Once you finish your implementation of "singletonSet", remove the
    * .ignore annotation.
    */
-
-    test("singleton set one contains one".ignore) {
-    
-    /**
-     * We create a new instance of the "TestSets" trait, this gives us access
-     * to the values "s1" to "s3".
-     */
-    new TestSets:
-      /**
-       * The string argument of "assert" is a message that is printed in case
-       * the test fails. This helps identifying which assertion failed.
-       */
-      assert(contains(s1, 1), "Singleton")
-  }
-
-  test("union contains all elements of each set") {
-    new TestSets:
-      val s = union(s1, s2)
-      assert(contains(s, 1), "Union 1")
-      assert(contains(s, 2), "Union 2")
-      assert(!contains(s, 3), "Union 3")
-  }
-
 
 
   import scala.concurrent.duration.*
