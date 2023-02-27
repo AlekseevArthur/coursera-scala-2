@@ -1,17 +1,16 @@
 package funsets
 
-/**
- * This class is a test suite for the methods in object FunSets.
- *
- * To run this test suite, start "sbt" then run the "test" command.
- */
+/** This class is a test suite for the methods in object FunSets.
+  *
+  * To run this test suite, start "sbt" then run the "test" command.
+  */
 class FunSetSuite extends munit.FunSuite:
 
   import FunSets.*
 
-  var s1 = singletonSet(1)
-  var s2 = singletonSet(2)
-  var u = union(s1, s2)
+  val s1 = singletonSet(1)
+  val s2 = singletonSet(2)
+  val u = union(s1, s2)
 
   test("contains is implemented") {
     assert(contains(x => true, 100))
@@ -20,86 +19,50 @@ class FunSetSuite extends munit.FunSuite:
   }
 
   test("Union is completed") {
-    assertEquals(u(1), true)
-    assertEquals(u(2), true)
-    assertEquals(u(3), false)
+    assert(contains(u, 1))
+    assert(contains(u, 2))
+    assert(!contains(u, 3))
   }
 
   test("Intersect is completed") {
-    var iS = intersect(s1, u)
-    assertEquals(iS(1), true)
-    assertEquals(iS(2), false)
-    assertEquals(iS(3), false)
+    val iS = intersect(s1, u)
+    assert(contains(iS, 1))
+    assert(!contains(iS, 2))
+    assert(!contains(iS, 3))
   }
 
   test("Diff is completed") {
-    var dS = diff(u, s1)
-    assertEquals(dS(1), false)
-    assertEquals(dS(2), true)
-    assertEquals(dS(3), false)
+    val dS = diff(u, s1)
+    assert(!contains(dS, 1))
+    assert(contains(dS, 2))
+    assert(!contains(dS, 3))
   }
 
   test("Filter is completed") {
-    var fS = filter(u, x => x > 1)
-    assertEquals(fS(1), false)
-    assertEquals(fS(2), true)
-    assertEquals(fS(3), false)
+    val fS = filter(u, x => x > 1)
+    assert(!contains(fS, 1))
+    assert(contains(fS, 2))
+    assert(!contains(fS, 3))
   }
 
   test("Forall is completed") {
-    var fs1 = forall(u, x => x > 1)
-    var fs2 = forall(u, x => x > 0)
-    assertEquals(fs1, false)
-    assertEquals(fs2, true)
+    assert(!forall(u, x => x > 1))
+    assert(forall(u, x => x > 0))
   }
 
   test("Exist is completed") {
-    var fs1 = exists(u, x => x > 1)
-    var fs2 = exists(u, x => x > 3)
-    assertEquals(fs1, true)
-    assertEquals(fs2, false)
+    assert(exists(u, x => x > 1))
+    assert(!exists(u, x => x > 3))
   }
 
   test("Map is completed") {
-    var fs1 = map(u, x => x * 5)
-    var fs2 = map(u, x => x + 1)
-    assertEquals(contains(fs1, 5), true)
-    assertEquals(contains(fs1, 1), false)
-    assertEquals(contains(fs2, 3), true)
-    assertEquals(contains(fs2, 1), false)
+    val fs1 = map(u, x => x * 5)
+    val fs2 = map(u, x => x + 1)
+    assert(contains(fs1, 5))
+    assert(!contains(fs1, 1))
+    assert(contains(fs2, 3))
+    assert(!contains(fs2, 1))
   }
-  /**
-   * When writing tests, one would often like to re-use certain values for multiple
-   * tests. For instance, we would like to create an Int-set and have multiple test
-   * about it.
-   *
-   * Instead of copy-pasting the code for creating the set into every test, we can
-   * store it in the test class using a val:
-   *
-   *   val s1 = singletonSet(1)
-   *
-   * However, what happens if the method "singletonSet" has a bug and crashes? Then
-   * the test methods are not even executed, because creating an instance of the
-   * test class fails!
-   *
-   * Therefore, we put the shared values into a separate trait (traits are like
-   * abstract classes), and create an instance inside each test method.
-   *
-   */
-
-  trait TestSets:
-    val s1 = singletonSet(1)
-    val s2 = singletonSet(2)
-    val s3 = singletonSet(3)
-
-  /**
-   * This test is currently disabled (by using .ignore) because the method
-   * "singletonSet" is not yet implemented and the test would fail.
-   *
-   * Once you finish your implementation of "singletonSet", remove the
-   * .ignore annotation.
-   */
-
 
   import scala.concurrent.duration.*
   override val munitTimeout = 10.seconds
